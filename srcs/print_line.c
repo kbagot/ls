@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/15 13:56:09 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/15 20:43:03 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/16 20:10:46 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,45 +41,68 @@ static char	*get_inode(int st_mode)
 	return (inode);
 }
 
-static char	*set_time(char *time)
+static char	*set_time(time_t timef)
 {
+	char *dtime;
 	char *ntime;
-//6month !
-	ntime = ft_strsub(time, 4, 12);
-	return (ntime);	
+	time_t now;
+
+	now = time(NULL);
+	dtime = ctime(&timef);
+	if ((now - timef) >= 15778800)
+		ntime = ft_strjoin(ft_strsub(dtime, 4, 7), ft_strsub(dtime, 19, 5));
+	else
+		ntime = ft_strsub(dtime, 4, 12);
+	return (ntime);
 }
 
-t_data	*make_line(char *path, t_data *fp)
+t_data	*make_line(char *path, t_data *fp, char *name)
 {
-	struct stat		*buf;
+	struct stat		buf;
 	struct group	*grp;
 	struct passwd	*pwd;
 
-	fp = (t_data*)malloc(sizeof(t_data));
-	grp = (struct group*)malloc(sizeof(struct group));
-	pwd = (struct passwd*)malloc(sizeof(struct passwd));
-	buf = (struct stat*)malloc(sizeof(struct stat));
-	if (stat(path, buf) == -1)
-		return	(fp);
-	grp = getgrgid(buf->st_gid);
-	pwd = getpwuid(buf->st_uid);
-	fp->inode = get_inode(buf->st_mode);
-	fp->hlinks = buf->st_nlink;
+	if (stat(path, &buf) == -1)
+		return (fp);
+	grp = getgrgid(buf.st_gid);
+	pwd = getpwuid(buf.st_uid);
+	fp->inode = get_inode(buf.st_mode);
+	fp->hlinks = buf.st_nlink;
 	fp->user = ft_strdup(pwd->pw_name);
 	fp->grp = ft_strdup(grp->gr_name);
-	fp->bytes = buf->st_size;
-	fp->time = set_time(ctime(&buf->st_mtime));
-	fp->path = ft_strdup(path);
+	fp->bytes = buf.st_size;
+	fp->time = set_time(buf.st_mtime);
+	fp->name = ft_strdup(name);
+	fp->blocks = buf.st_blocks;
+	fp->next = NULL;
 	return (fp);
 }
 
-void	print_line(char *path)
+t_data	*make_list(t_data *fp)
 {
-	t_data *fp;
-	time_t *t;
+	t_data *new;
 
-	t = NULL;
-	fp = NULL;
-	fp = make_line(path, fp);
-	printf("%s  %d %s  %s  %d %s %s\n", fp->inode, fp->hlinks, fp->user, fp->grp, fp->bytes, fp->time, fp->path);
+	if (fp == NULL)
+	{// SAVE first
+		if ((new = (t_data*)malloc(sizeof(t_data))) == NULL)
+			return (NULL);
+	}
+	else
+	{
+		if ((new = (t_data*)malloc(sizeof(t_data))) == NULL)
+			return (NULL);
+		fp->next = new;
+		new->next = NULL;
+	}
+	return (new);
 }
+/*
+void	print_line(char *path, char *name, t_data *fp)
+{
+	static int total = 0;
+
+	fp = make_line(path, fp);
+	total += fp->blocks;
+	printf("%s  %d %s  %s  %d %s %s\n", fp->inode, fp->hlinks, fp->user, fp->grp, fp->bytes, fp->time, name);
+	printf("%d\n", total);
+}*/

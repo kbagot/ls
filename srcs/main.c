@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/13 19:44:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/15 20:43:04 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/16 20:10:47 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,11 @@ int			main(int argc, char **argv)
 			if (parse_opt(&argv[1][0]))
 				errno = 1;
 			else if (errno == 20) // FICHIER
-				print_line(argv[i]);
-			else if (errno == 0) //PATH DOSSIER
 				ft_printf("{%s}\n", argv[i]);
+			else if (errno == 0) //PATH DOSSIER
+			{
+				make_dir(argv[i], dr);
+			}	
 			else if (errno == 2 && argv[i][0] != '-')
 				ft_printf("ls: %s: No such file or directory\n", argv[i]);		
 			//	ft_printf("errno: %d\n", errno);
@@ -61,6 +63,7 @@ int			main(int argc, char **argv)
 	else // simple ls
 	{
 		dr = opendir("./");
+		make_dir("./", dr);
 	}
 	return (0);
 }

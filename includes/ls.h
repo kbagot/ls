@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/14 19:57:00 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/15 20:43:07 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/16 20:10:48 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <dirent.h>
 # include <sys/stat.h>
 # include <errno.h>
-//# include <stdio.h>
+# include <stdio.h>
 # include <pwd.h>
 # include <sys/types.h>
 # include <grp.h>
@@ -32,11 +32,20 @@ typedef struct		s_data
 	char			*grp;
 	int				bytes;
 	char			*time;
-	char			*path;
+	char			*name;
+	int				blocks;
 	struct s_data	*next;
 }					t_data;
 
-t_data	*make_line(char *path, t_data *fp);
-void	print_line(char *path);
+typedef struct		s_len
+{
+	int				ulen;
+	int				glen;
+	int				blen;
+}					t_len;
+
+t_data	*make_line(char *path, t_data *fp, char *name);
+void	make_dir(char *path, DIR *dr);
+t_data	*make_list(t_data *fp);
 
 #endif
