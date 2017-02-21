@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/15 13:56:09 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/17 18:29:07 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/21 20:53:50 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,16 +56,35 @@ static char	*set_time(time_t timef)
 	return (ntime);
 }
 
-t_data	*make_line(char *path, t_data *fp, char *name)
+static char *rlink(char *path, struct stat buf)
+{
+	char *linkname;
+	ssize_t bufsiz;
+
+	bufsiz = buf.st_size + 1;
+	if (buf.st_size == 0)
+		bufsiz = PATH_MAX;
+	linkname = ft_strnew(bufsiz);
+	bufsiz = readlink(path, linkname, bufsiz);
+	return (linkname);
+}
+
+t_data	*make_line(char *path, t_data *fp, char *name, struct dirent *ent)
 {
 	struct stat		buf;
 	struct group	*grp;
 	struct passwd	*pwd;
 
-	if (stat(path, &buf) == -1)
-		return (fp);
+	fp->linkname = NULL;
+	if (ent->d_type == 10)
+		if (lstat(path, &buf) == -1)
+			return (NULL);
+	if (ent->d_type != 10)
+		if (stat(path, &buf) == -1)
+			return (NULL);
 	grp = getgrgid(buf.st_gid);
 	pwd = getpwuid(buf.st_uid);
+	fp->path = ft_strdup(path);
 	fp->inode = get_inode(buf.st_mode);
 	fp->hlinks = buf.st_nlink;
 	fp->user = ft_strdup(pwd->pw_name);
@@ -74,27 +93,28 @@ t_data	*make_line(char *path, t_data *fp, char *name)
 	fp->time = set_time(buf.st_mtime);
 	fp->name = ft_strdup(name);
 	fp->blocks = buf.st_blocks;
+	if (fp->inode[0] == 'l')
+		fp->linkname = rlink(path, buf);
 	fp->next = NULL;
 	return (fp);
 }
 
-t_data	*make_list(t_data *fp)
+t_data	*make_list(t_data *fp, t_data *save)
 {
-	t_data *new;
+	t_data *cursor;
 
-	if (fp == NULL)
-	{// SAVE first
-		if ((new = (t_data*)malloc(sizeof(t_data))) == NULL)
-			return (NULL);
-	}
-	else
+	cursor = save;
+	if (ft_strcmp(save->name, fp->name) > 0)
 	{
-		if ((new = (t_data*)malloc(sizeof(t_data))) == NULL)
-			return (NULL);
-		fp->next = new;
-		new->next = NULL;
+		fp->next = save;
+		save = fp;
+		return (save);
 	}
-	return (new);
+	while (cursor->next && ft_strcmp(cursor->next->name, fp->name) <= 0)
+		cursor = cursor->next;
+	fp->next = cursor->next;
+	cursor->next = fp;
+	return (save);
 }
 /*
 void	print_line(char *path, char *name, t_data *fp)

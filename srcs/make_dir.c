@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 16:07:38 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/17 18:29:19 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/21 20:53:47 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,17 @@ static void	set_len(t_len *len, t_data *fp)
 	len->total += fp->blocks;
 }
 
-void		make_dir(char *path, DIR *dr, t_opt *opt)
+static t_data	*make_link(t_data *fp)
 {
+	if ((fp = (t_data*)malloc(sizeof(t_data))) == NULL)
+		return (NULL);
+	fp->next = NULL;
+	return (fp);
+}
+
+void		make_dir(char *path, t_opt *opt)
+{
+	DIR *dr;
 	t_data	*fp;
 	t_data	*save;
 	t_len	*len;
@@ -59,24 +68,43 @@ void		make_dir(char *path, DIR *dr, t_opt *opt)
 	fp = NULL;
 	len = (t_len*)malloc(sizeof(t_len));
 	init_t_len(len);
+	dr = opendir(path);
 	while ((ent = readdir(dr)))
 	{
-		cleanpath = ft_strjoin("/", ent->d_name);
-		cleanpath = ft_strjoin(path, cleanpath);
-		fp = make_list(fp);
+		cleanpath = ft_strjoin(path, ent->d_name);
+		fp = make_link(fp);
+		fp = make_line(cleanpath, fp, ent->d_name, ent);
+	printf("cleanpath :%s\n", cleanpath);
 		if (save == NULL)
 			save = fp;
-		fp = make_line(cleanpath, fp, ent->d_name);
-		//fct trie goodplace;
+		else
+			save = make_list(fp, save);
 		set_len(len, fp);
 	}
-//
-//
+	print_file(save, len, opt);
+	closedir(dr);
+	free(cleanpath);
+	while (save)
+	{
+		fp = save;
+		save = save->next;
+		free(fp);
+	}
+}
+
+void print_file(t_data *save, t_len *len, t_opt *opt)
+{
+	printf("PATH %s\n", save->path);
 	printf("total %d\n", len->total);
 	while (save)
 	{
-		printf("%s  %*d %*s  %*s  %*d %s %s\n", save->inode, len->hlen, save->hlinks, len->ulen, save->user, len->glen, save->grp, len->blen, save->bytes, save->time, save->name);
-//		printf("name :[%s]\n", save->name);
+		if (opt->l == 1)
+		printf("%s  %*d %*s  %*s  %*d %s %s", save->inode, len->hlen, save->hlinks, len->ulen, save->user, len->glen, save->grp, len->blen, save->bytes, save->time, save->name);
+		else 
+			printf("%s", save->name);
+		if (save->linkname && opt->l == 1)
+			printf(" -> %s", save->linkname);
+		printf("\n");
 		save = save->next;
 	}
 }
