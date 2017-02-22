@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 16:07:38 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/21 20:53:47 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/22 18:49:37 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,10 @@ void		make_dir(char *path, t_opt *opt)
 	{
 		fp = save;
 		save = save->next;
+		free(fp->path);
+		free(fp->user);
+		free(fp->grp);
+		free(fp->name);
 		free(fp);
 	}
 }
@@ -96,6 +100,8 @@ void print_file(t_data *save, t_len *len, t_opt *opt)
 {
 	printf("PATH %s\n", save->path);
 	printf("total %d\n", len->total);
+	int lol = opt->l;
+	lol = 0;
 	while (save)
 	{
 		if (opt->l == 1)
@@ -107,4 +113,6 @@ void print_file(t_data *save, t_len *len, t_opt *opt)
 		printf("\n");
 		save = save->next;
 	}
+		printf("\n");
+		free(len);
 }

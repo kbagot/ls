@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/15 13:56:09 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/21 20:53:50 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/22 18:49:40 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,13 +116,3 @@ t_data	*make_list(t_data *fp, t_data *save)
 	cursor->next = fp;
 	return (save);
 }
-/*
-void	print_line(char *path, char *name, t_data *fp)
-{
-	static int total = 0;
-
-	fp = make_line(path, fp);
-	total += fp->blocks;
-	printf("%s  %d %s  %s  %d %s %s\n", fp->inode, fp->hlinks, fp->user, fp->grp, fp->bytes, fp->time, name);
-	printf("%d\n", total);
-}*/

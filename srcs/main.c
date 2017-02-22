@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/13 19:44:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/21 20:53:46 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/22 18:49:36 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,14 +190,9 @@ int			main(int argc, char **argv)
 		{
 			dr = opendir(argv[i]);
 			if (errno == 0 && opt->R == 0) //PATH DOSSIER
-			{
-				make_dir(argv[i], opt);
-			}
+				make_dir(ft_strjoin(argv[i], "/"), opt);
 			else if (errno == 0 && opt->R == 1)
-			{
-			//	make_dir(argv[i], opt);
 				make_all_r(argv[i], dr, opt);
-			}
 			errno = 0;
 			i++;
 		}
@@ -207,5 +202,6 @@ int			main(int argc, char **argv)
 		dr = opendir("./");
 		make_dir("./", opt);
 	}
+	free(opt);
 	return (0);
 }
