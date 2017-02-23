@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/13 19:44:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/22 18:49:36 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/23 16:07:38 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,9 @@ int			main(int argc, char **argv)
 	int i;
 	DIR *dr;
 	t_opt *opt;
+	t_data *dir;
 
+	dir = NULL;
 	i = 1;
 	opt = NULL;
 	opt = (t_opt*)malloc(sizeof(t_opt));
@@ -190,9 +192,9 @@ int			main(int argc, char **argv)
 		{
 			dr = opendir(argv[i]);
 			if (errno == 0 && opt->R == 0) //PATH DOSSIER
-				make_dir(ft_strjoin(argv[i], "/"), opt);
+				dir = make_dir(ft_strjoin(argv[i], "/"), opt);
 			else if (errno == 0 && opt->R == 1)
-				make_all_r(argv[i], dr, opt);
+				make_all_r(ft_strdup(argv[i]), dir, opt);
 			errno = 0;
 			i++;
 		}

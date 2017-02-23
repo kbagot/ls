@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/15 13:56:09 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/22 18:49:40 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/23 18:14:03 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,14 @@ t_data	*make_line(char *path, t_data *fp, char *name, struct dirent *ent)
 	struct passwd	*pwd;
 
 	fp->linkname = NULL;
+	//printf("LOL\n");
 	if (ent->d_type == 10)
 		if (lstat(path, &buf) == -1)
 			return (NULL);
 	if (ent->d_type != 10)
 		if (stat(path, &buf) == -1)
 			return (NULL);
+	//fp = make_link(fp);
 	grp = getgrgid(buf.st_gid);
 	pwd = getpwuid(buf.st_uid);
 	fp->path = ft_strdup(path);

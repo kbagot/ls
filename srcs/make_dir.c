@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 16:07:38 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/22 18:49:37 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/23 18:13:59 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static void	set_len(t_len *len, t_data *fp)
 	len->total += fp->blocks;
 }
 
-static t_data	*make_link(t_data *fp)
+t_data	*make_link(t_data *fp)
 {
 	if ((fp = (t_data*)malloc(sizeof(t_data))) == NULL)
 		return (NULL);
@@ -55,7 +55,7 @@ static t_data	*make_link(t_data *fp)
 	return (fp);
 }
 
-void		make_dir(char *path, t_opt *opt)
+t_data		*make_dir(char *path, t_opt *opt)
 {
 	DIR *dr;
 	t_data	*fp;
@@ -69,43 +69,65 @@ void		make_dir(char *path, t_opt *opt)
 	len = (t_len*)malloc(sizeof(t_len));
 	init_t_len(len);
 	dr = opendir(path);
+	if (errno != 0)
+	{
+
+		printf("%s\nls: [GETENDPATH]%s\n\n", path, strerror(errno));
+		errno = 0;
+		return (NULL);
+	}
+	printf("error :%d\n", errno);
 	while ((ent = readdir(dr)))
 	{
 		cleanpath = ft_strjoin(path, ent->d_name);
-		fp = make_link(fp);
+//		if (opt->R == 0)
+//			free(path);
+		fp = make_link(fp); // malloc maillon
 		fp = make_line(cleanpath, fp, ent->d_name, ent);
-	printf("cleanpath :%s\n", cleanpath);
+		if (errno != 0)
+		{// to printfile
+ 			printf("ls: %s: %s\n", ent->d_name, strerror(errno));
+			errno = 0;
+			//return (NULL);
+		}
+//	printf("cleanpath :%s\n", cleanpath);
 		if (save == NULL)
 			save = fp;
-		else
+		else if (fp)
 			save = make_list(fp, save);
+//	printf("salut\n");
+		if (fp)
 		set_len(len, fp);
 	}
+	if (fp == NULL)
+		return (NULL);
 	print_file(save, len, opt);
-	closedir(dr);
 	free(cleanpath);
-	while (save)
-	{
-		fp = save;
-		save = save->next;
-		free(fp->path);
-		free(fp->user);
-		free(fp->grp);
-		free(fp->name);
-		free(fp);
-	}
+	closedir(dr);
+	if (opt->R == 0)
+		while (save)
+		{
+			fp = save;
+			save = save->next;
+			free(fp->path);
+			free(fp->inode);
+			free(fp->user);
+			free(fp->grp);
+			free(fp->name);
+			free(fp);
+		}
+	return (save);
 }
 
 void print_file(t_data *save, t_len *len, t_opt *opt)
 {
 	printf("PATH %s\n", save->path);
 	printf("total %d\n", len->total);
-	int lol = opt->l;
-	lol = 0;
+	
 	while (save)
 	{
 		if (opt->l == 1)
-		printf("%s  %*d %*s  %*s  %*d %s %s", save->inode, len->hlen, save->hlinks, len->ulen, save->user, len->glen, save->grp, len->blen, save->bytes, save->time, save->name);
+		printf("%s  %*d %-*s  %-*s  %*d %s %s", save->inode, len->hlen, save->hlinks, len->ulen, save->user, len->glen, save->grp, len->blen, save->bytes, save->time, save->name);
 		else 
 			printf("%s", save->name);
 		if (save->linkname && opt->l == 1)
