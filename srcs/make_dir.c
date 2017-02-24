@@ -6,13 +6,13 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 16:07:38 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/23 18:13:59 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/24 20:33:09 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ls.h"
 
-static void	init_t_len(t_len *len)
+void	init_t_len(t_len *len)
 {
 	len->hlen = 0;
 	len->ulen = 0;
@@ -21,7 +21,7 @@ static void	init_t_len(t_len *len)
 	len->total = 0;
 }
 
-static int	ft_intlen(int nb)
+int		ft_intlen(int nb)
 {
 	int len;
 
@@ -34,7 +34,7 @@ static int	ft_intlen(int nb)
 	return (len);
 }
 
-static void	set_len(t_len *len, t_data *fp)
+void	set_len(t_len *len, t_data *fp)
 {
 	if (ft_intlen(fp->hlinks) > len->hlen)
 		len->hlen = ft_intlen(fp->hlinks);
@@ -72,32 +72,38 @@ t_data		*make_dir(char *path, t_opt *opt)
 	if (errno != 0)
 	{
 
-		printf("%s\nls: [GETENDPATH]%s\n\n", path, strerror(errno));
+		ft_printf("%s\nls: [GETENDPATH]%s\n\n", path, strerror(errno));
 		errno = 0;
 		return (NULL);
 	}
-	printf("error :%d\n", errno);
+//	ft_printf("error :%d\n", errno);
 	while ((ent = readdir(dr)))
 	{
 		cleanpath = ft_strjoin(path, ent->d_name);
 //		if (opt->R == 0)
 //			free(path);
-		fp = make_link(fp); // malloc maillon
-		fp = make_line(cleanpath, fp, ent->d_name, ent);
+//		fp = make_link(fp); // malloc maillon
+		if ((opt->a == 0 && ent->d_name[0] != '.') || opt->a == 1)
+			fp = make_line(path, cleanpath, fp, ent->d_name);  // cut start
 		if (errno != 0)
-		{// to printfile
- 			printf("ls: %s: %s\n", ent->d_name, strerror(errno));
+		{// to ft_printfile
+ 			ft_printf("ls: %s: %s\n", ent->d_name, strerror(errno));
 			errno = 0;
 			//return (NULL);
 		}
-//	printf("cleanpath :%s\n", cleanpath);
+//	ft_printf("cleanpath :%s\n", cleanpath);
 		if (save == NULL)
 			save = fp;
 		else if (fp)
-			save = make_list(fp, save);
-//	printf("salut\n");
+		{
+	//		if (opt->t == 0)
+				save = make_list(fp, save, opt);
+	//		else
+	//			save = make_list_t(fp, save, opt);
+		}
+//	ft_printf("salut\n");
 		if (fp)
-		set_len(len, fp);
+		set_len(len, fp);	//cut end
 	}
 	if (fp == NULL)
 		return (NULL);
@@ -121,20 +127,24 @@ t_data		*make_dir(char *path, t_opt *opt)
 
 void print_file(t_data *save, t_len *len, t_opt *opt)
 {
-	printf("PATH %s\n", save->path);
-	printf("total %d\n", len->total);
-	
+	if (opt->tricks == 1)
+		ft_printf("\n");
+	opt->tricks = 1;
+	if (opt->l == 1)
+	{
+		ft_printf("%s:\n", save->path);
+		ft_printf("total %d\n", len->total);
+	}
 	while (save)
 	{
 		if (opt->l == 1)
-		printf("%s  %*d %-*s  %-*s  %*d %s %s", save->inode, len->hlen, save->hlinks, len->ulen, save->user, len->glen, save->grp, len->blen, save->bytes, save->time, save->name);
+			ft_printf("%s  %*d %-*s  %-*s  %*d %s %s", save->inode, len->hlen, save->hlinks, len->ulen, save->user, len->glen, save->grp, len->blen, save->bytes, save->time, save->name);
 		else 
-			printf("%s", save->name);
+			ft_printf("%s", save->name);
 		if (save->linkname && opt->l == 1)
-			printf(" -> %s", save->linkname);
-		printf("\n");
+			ft_printf(" -> %s", save->linkname);
 		save = save->next;
+		ft_printf("\n");
 	}
-		printf("\n");
 		free(len);
 }

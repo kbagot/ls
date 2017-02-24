@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/15 13:56:09 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/23 18:14:03 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/24 19:40:14 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,29 +69,29 @@ static char *rlink(char *path, struct stat buf)
 	return (linkname);
 }
 
-t_data	*make_line(char *path, t_data *fp, char *name, struct dirent *ent)
+t_data	*make_line(char *cleanpath, char *path, t_data *fp, char *name)
 {
 	struct stat		buf;
 	struct group	*grp;
 	struct passwd	*pwd;
 
-	fp->linkname = NULL;
-	//printf("LOL\n");
-	if (ent->d_type == 10)
-		if (lstat(path, &buf) == -1)
-			return (NULL);
-	if (ent->d_type != 10)
+	//if (ent->d_type == 10)
+	if (lstat(path, &buf) == -1)
+	//		return (NULL);
+	//if (ent->d_type != 10)Feb 11 17:40
 		if (stat(path, &buf) == -1)
 			return (NULL);
-	//fp = make_link(fp);
+	fp = make_link(fp);
+	fp->linkname = NULL;
 	grp = getgrgid(buf.st_gid);
 	pwd = getpwuid(buf.st_uid);
-	fp->path = ft_strdup(path);
+	fp->path = ft_strdup(cleanpath);
 	fp->inode = get_inode(buf.st_mode);
 	fp->hlinks = buf.st_nlink;
 	fp->user = ft_strdup(pwd->pw_name);
 	fp->grp = ft_strdup(grp->gr_name);
 	fp->bytes = buf.st_size;
+	fp->times = buf.st_mtime;
 	fp->time = set_time(buf.st_mtime);
 	fp->name = ft_strdup(name);
 	fp->blocks = buf.st_blocks;
@@ -101,18 +101,29 @@ t_data	*make_line(char *path, t_data *fp, char *name, struct dirent *ent)
 	return (fp);
 }
 
-t_data	*make_list(t_data *fp, t_data *save)
+t_data	*make_list(t_data *fp, t_data *save, t_opt *opt)
 {
 	t_data *cursor;
 
 	cursor = save;
-	if (ft_strcmp(save->name, fp->name) > 0)
+	if (((opt->r == 1 && opt->t == 1 && save->times > fp->times)
+|| (opt->r == 0 && opt->t == 1 && save->times < fp->times)) || (opt->t == 1 && 
+save->times == fp->times && ((opt->r == 0 && ft_strcmp(save->name, fp->name) > 0)
+ || (opt->r == 1 && ft_strcmp(save->name, fp->name) < 0))) || ((opt->t == 0 && 
+ opt->r == 1 && ft_strcmp(save->name, fp->name) < 0) ||
+(opt->t == 0 && opt->r == 0 && ft_strcmp(save->name, fp->name) > 0)))
 	{
 		fp->next = save;
 		save = fp;
 		return (save);
 	}
-	while (cursor->next && ft_strcmp(cursor->next->name, fp->name) <= 0)
+	while (cursor->next && (((opt->r == 1 && opt->t == 1 && cursor->next->times < 
+fp->times) || (opt->r == 0 && opt->t == 1 && cursor->next->times > fp->times)) 
+|| (opt->t == 1 && cursor->next->times == fp->times && ((opt->r == 0 &&
+ft_strcmp(cursor->next->name, fp->name) <= 0) || (opt->r == 1 && 
+ft_strcmp(cursor->next->name, fp->name) >= 0))) || ((opt->t == 0 && opt->r == 0
+&& ft_strcmp(cursor->next->name, fp->name) <= 0) || (opt->t == 0 && opt->r == 1 
+&& ft_strcmp(cursor->next->name, fp->name) >= 0))))
 		cursor = cursor->next;
 	fp->next = cursor->next;
 	cursor->next = fp;

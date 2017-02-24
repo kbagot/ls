@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/13 19:44:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/02/23 16:07:38 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/02/24 20:33:10 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ static void		init_opt(t_opt *opt)
 	opt->a = 0;
 	opt->r = 0;
 	opt->t = 0;
+	opt->tricks = 0;
 }
 
 static t_opt	*stock_opt(t_opt *opt, char **arg)
@@ -48,13 +49,13 @@ static t_opt	*stock_opt(t_opt *opt, char **arg)
 	int i;
 
 	i = 1;
-	while (arg[i][0] == '-' && parse_opt(arg[i]))
+	while (arg[i] && arg[i][0] == '-' && parse_opt(arg[i]))
 	{
 		if (ft_strchr(arg[i], 'l'))
 			opt->l = 1;
 		if (ft_strchr(arg[i], 'R'))
 			opt->R = 1;
-		if (ft_strchr(arg[i], 'a'))
+		if  (ft_strchr(arg[i], 'a'))
 			opt->a = 1;
 		if (ft_strchr(arg[i], 'r'))
 			opt->r = 1;
@@ -62,8 +63,6 @@ static t_opt	*stock_opt(t_opt *opt, char **arg)
 			opt->t = 1;
 		i++;
 	}
-	if (errno == 2)
-		free(opt);
 	return (opt);
 }
 
@@ -109,7 +108,7 @@ static void	print_error(t_error *error)
 	}
 }
 
-static char **parse_arg(char **arg)
+static char **parse_arg(char **arg, t_opt *opt)
 {
 	int i;
 	int j;
@@ -120,13 +119,16 @@ static char **parse_arg(char **arg)
 	tmp = NULL;
 	while (arg[i])
 	{
-		while (arg[j] && (ft_strcmp(arg[i], arg[j])) >= 0)
-			j++;
-		if (arg[j] && ft_strcmp(arg[i], arg[j]) < 0)
+		while (arg[j] /*&& ((opt->r == 0 && ft_strcmp(arg[i], arg[j]) >= 0) || (opt->r == 1 && ft_strcmp(arg[i], arg[j]) <= 0))*/)
 		{
-			tmp = arg[i];
-			arg[i] = arg[j];
-			arg[j] = tmp;
+//		printf("%d\n", j);
+		if (arg[j] && ((opt->r == 0 && ft_strcmp(arg[i], arg[j]) < 0) || (opt->r == 1 && ft_strcmp(arg[i], arg[j]) > 0)))
+		{
+			tmp = arg[j];
+			arg[j] = arg[i];
+			arg[i] = tmp;
+		}	
+			j++;
 		}
 		i++;
 		j = 1;
@@ -134,7 +136,7 @@ static char **parse_arg(char **arg)
 	return (arg);
 }
 
-static void	find_error(char **arg)
+static void	find_error(char **arg, t_opt *opt)
 {
 	DIR *dr;
 	int i;
@@ -142,9 +144,9 @@ static void	find_error(char **arg)
 
 	i = 1;
 	error = NULL;
-	while (arg[i][0] == '-' && parse_opt(arg[i]))
+	while (arg[i] && arg[i][0] == '-' && parse_opt(arg[i]))
 		i++;
-	arg = parse_arg(arg);
+	arg = parse_arg(arg, opt);
 	while (arg[i])
 	{
 		dr = opendir(arg[i]);
@@ -163,34 +165,57 @@ int			main(int argc, char **argv)
 	DIR *dr;
 	t_opt *opt;
 	t_data *dir;
+	t_data *save;
+	int  tmplol;
+	t_len *len;
 
+	len = NULL;
+	tmplol = 0;
 	dir = NULL;
 	i = 1;
+	save = NULL;
 	opt = NULL;
 	opt = (t_opt*)malloc(sizeof(t_opt));
 	init_opt(opt);
+	if (parse_opt(argv[1])) // parse and stock opt/put error and free
+	{
+		opt = stock_opt(opt, argv);
+			if (errno == 2)
+				return (0);
+	}
 	if (argc > 1)
 	{
-		if (parse_opt(argv[1])) // parse and stock opt/put error and free
-		{
-			opt = stock_opt(opt, argv);
-				if (errno == 2)
-					return (0);
-		}
-		find_error(argv); // find and print error arg
-		argv = parse_arg(argv);
+		find_error(argv, opt); // find and print error arg
+//		argv = parse_arg(argv, opt);
 		while (argv[i])
 		{
 			dr = opendir(argv[i]);
+		//	printf("%d\n" ,errno);
 			if (errno == 20) // FICHIER
-				printf("%s\n", argv[i]);
+			{//maybe add ./-----
+				len = (t_len*)malloc(sizeof(t_len));
+				init_t_len(len);
+			//	if ((name = ft_strsub(ft_strrchr(argv[i], '/'), 1, ft_strlen(argv[i]))) == NULL)
+				dir = make_line(ft_strdup(argv[i]), ft_strdup(argv[i]), dir, ft_strdup(argv[i]));
+				printf("\n");
+				if (save == NULL)
+					save = dir;
+				else if (dir)
+					save = make_list(dir, save, opt);
+				set_len(len, dir);
+				tmplol = 1;
+			}
 			errno = 0;
 			i++;
 		}
+		if (save)
+			print_file(save, len, opt);
 		i = 1;
 		while (argv[i])
 		{
 			dr = opendir(argv[i]);
+			if (errno == 0)
+				tmplol = 1;
 			if (errno == 0 && opt->R == 0) //PATH DOSSIER
 				dir = make_dir(ft_strjoin(argv[i], "/"), opt);
 			else if (errno == 0 && opt->R == 1)
@@ -199,10 +224,13 @@ int			main(int argc, char **argv)
 			i++;
 		}
 	}
-	else // simple ls
+//	printf("salut%d\n", errno);
+	if (tmplol == 0)// simple ls
 	{
-		dr = opendir("./");
-		make_dir("./", opt);
+		if (opt->R == 1)
+			make_all_r(ft_strdup("./"), dir, opt);
+		else
+			make_dir("./", opt);
 	}
 	free(opt);
 	return (0);
