@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/15 13:56:09 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/07 20:42:06 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/08 20:57:13 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,24 @@ static char		*get_inode(int st_mode)
 	inode[1] = (S_IRUSR & st_mode) ? 'r' : '-';
 	inode[2] = (S_IWUSR & st_mode) ? 'w' : '-';
 	inode[3] = (S_IXUSR & st_mode) ? 'x' : '-';
+	if (inode [3] == 'x' && S_ISUID & st_mode)
+		inode [3] = 's';
+	else if (S_ISUID & st_mode)
+		inode [3] = 'S';
 	inode[4] = (S_IRGRP & st_mode) ? 'r' : '-';
 	inode[5] = (S_IWGRP & st_mode) ? 'w' : '-';
 	inode[6] = (S_IXGRP & st_mode) ? 'x' : '-';
+	if (inode[6] == 'x' && S_ISGID & st_mode)
+		inode [6] = 's';
+	else if (S_ISGID & st_mode)
+		inode [6] = 'S';
 	inode[7] = (S_IROTH & st_mode) ? 'r' : '-';
 	inode[8] = (S_IWOTH & st_mode) ? 'w' : '-';
 	inode[9] = (S_IXOTH & st_mode) ? 'x' : '-';
+	if (inode[9] == 'x' && S_ISVTX & st_mode)
+		inode [9] = 't';
+	else if (S_ISVTX & st_mode)
+		inode [9] = 'T';
 	return (inode);
 }
 
@@ -51,10 +63,12 @@ static char		*set_time(time_t timef)
 	dtime = ctime(&timef);
 	ntime = NULL;
 	if ((now - timef) >= 15778800 || (now - timef) < 0)
-		if (ft_strcmp(&dtime[24], "10000") == 0)
+//	{
+		if (ft_strcmp(&dtime[23], " 10000\n") == 0)
 			ntime = ft_strjoin(ft_strsub(dtime, 4, 7), ft_strsub(dtime, 23, 6));
 		else
 			ntime = ft_strjoin(ft_strsub(dtime, 4, 7), ft_strsub(dtime, 19, 5));
+//	}
 	else
 		ntime = ft_strsub(dtime, 4, 12);
 	return (ntime);

@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/13 19:44:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/07 20:42:09 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/08 20:57:10 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static int	parse_opt(char *opt)
 	if (opt[0] == '-')
 		while (opt[j])
 		{
-			if (ft_strchr(val, opt[j]) == NULL)
+			if (ft_strchr(val, opt[j]) == NULL || (opt[j] == '-' && opt[j + 1]))
 			{
 				ft_putstr_fd("ls: illegal option -- ", 2);
 				ft_putchar_fd(opt[j], 2);
@@ -64,7 +64,7 @@ static int	parse_opt(char *opt)
 			//	ft_putchar_fd('-', 2);
 				ft_putstr_fd(val, 2);
 				ft_putstr_fd("] [file ...]\n", 2);
-				errno = 2;
+				errno = 42;
 				return (0);
 			}
 			j++;
@@ -90,9 +90,10 @@ static t_opt	*stock_opt(t_opt *opt, char **arg)
 	struct stat		buf;
 
 	i = 1;
+	errno = 0;
 	dr = opendir(arg[i]);
-	while (arg[i] && arg[i][0] == '-' && parse_opt(arg[i]) && errno != 0 &&
-((lstat(arg[i], &buf) == -1) || (stat(arg[i], &buf) == -1)))
+	while (arg[i] && arg[i][0] == '-' && errno != 0 && ((lstat(arg[i], &buf) == -1) ||
+				(stat(arg[i], &buf) == -1)) && parse_opt(arg[i]))
 	{
 		if (ft_strchr(arg[i], 'l'))
 			opt->l = 1;
@@ -106,7 +107,7 @@ static t_opt	*stock_opt(t_opt *opt, char **arg)
 			opt->t = 1;
 		i++;
 		if (dr)
-		closedir(dr);
+			closedir(dr);
 		errno = 0;
 		dr = opendir(arg[i]);
 	}
@@ -151,24 +152,41 @@ static char	**find_error(char **arg, t_opt *opt)
 
 	dircount = 0;
 	i = 1;
-	while (arg[i] && arg[i][0] == '-' && parse_opt(arg[i]) && stat(arg[i], &buf) == -1 && lstat(arg[i], &buf) == -1)
+	while (arg[i] && arg[i][0] == '-' && stat(arg[i], &buf) == -1 &&
+			lstat(arg[i], &buf) == -1 && parse_opt(arg[i])) 
 		i++;
-//		printf("salut\n");
-	arg = parse_arg(&arg[i], opt);
+	if (arg[i] && (ft_strcmp(&arg[i][0], "--") == 0))
+		i++;
+	if (opt->r == 1)
+	{
+		opt->r = 0;
+		arg = parse_arg(&arg[i], opt);
+		opt->r = 1;
+	}
+	else
+		arg = parse_arg(&arg[i], opt);
 	i = 0;
 	while (arg[i])
 	{
 		errno = 0;
 		dr = opendir(arg[i]);
-		if (errno != 20 && errno != 0 && (errno == 2 && (lstat(arg[i], &buf) == -1)))
+//		printf("%s   %d\n", arg[i], errno);
+		if (errno == 13 || (errno != 20 && errno != 0 && (errno == 2 && lstat(arg[i], &buf) == -1)))
 		{
-			perror(ft_strjoin("ft_ls : " , arg[i]));
+			if (arg[i][0])
+				perror(ft_strjoin("ls: ", arg[i]));
+			else
+				perror(ft_strjoin("ls: ", "fts_open"));
 			opt->tricks = 1;
 		}
+		if (dr)
+			closedir(dr);
 		if (errno == 0)
 			dircount += 1;
 		i++;
 	}
+	if (opt->r == 1)
+		arg = parse_arg(&arg[0], opt);
 	if (dircount > 1)
 		opt->tricks = 1;
 	return (arg);
@@ -195,7 +213,7 @@ int			main(int argc, char **argv)
 //	if (argc > 1 && parse_opt(argv[1])) // parse and stock opt/put error and free
 //	{
 		opt = stock_opt(opt, argv);
-			if (errno == 2)
+			if (errno == 42)//usage so stop
 				return (1);
 //	}
 //	else///WTFFF
@@ -206,9 +224,11 @@ struct stat		buf;
 		{
 		while (argv[i])
 		{
+			errno = 0;
 			dr = opendir(argv[i]);
-			if (errno != 0 && ((lstat(argv[i], &buf) == 0) || (stat(argv[i], &buf) == 0)))// FICHIER
+			if (errno == 20 || (errno == 2 && lstat(argv[i], &buf) == 0))// FICHIER
 			{
+//		printf("salut%s\n", argv[i]);
 				opt->tricks = 1;
 				len = (t_len*)malloc(sizeof(t_len));
 				init_t_len(len);
@@ -220,7 +240,6 @@ struct stat		buf;
 				set_len(len, dir);
 				tmplol = 1;
 			}
-			errno = 0;
 			i++;
 		}
 		if (save)
@@ -228,21 +247,18 @@ struct stat		buf;
 		i = 0;
 		while (argv[i])
 		{
+			errno = 0;
 			dr = opendir(argv[i]);
-	//	printf("%d\n", errno);	
 			if (errno == 0)
 				tmplol = 1;
 			if (errno == 0 && opt->R == 0) //PATH DOSSIER
 				dir = make_dir(ft_strjoin(argv[i], "/"), opt);
 			else if (errno == 0 && opt->R == 1)
 				make_all_r(ft_strdup(argv[i]), dir, opt);
-
-			//	perror(path);
-			errno = 0;
 			i++;
 		}
 	}
-	if (tmplol == 0)// simple ls
+	if (tmplol == 0 && opt->tricks == 0)// simple ls
 	{
 		if (opt->R == 1)
 			make_all_r(ft_strdup("."), dir, opt);

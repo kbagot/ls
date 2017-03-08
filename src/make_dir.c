@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 16:07:38 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/07 20:42:08 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/08 20:57:11 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,8 @@ t_data		*make_dir(char *path, t_opt *opt)
 	{
 		if (opt->dpcount == 1)
 			ft_printf("\n");
-		ft_printf("%.*s:\n", (int)ft_strlen(path) - 1, path);
+		if (opt->tricks == 1)
+			ft_printf("%.*s:\n", (int)ft_strlen(path) - 1, path);
 		opt->dpcount = 1;
 		return (NULL);
 	}
