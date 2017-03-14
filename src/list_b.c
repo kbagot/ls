@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/11 15:43:33 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 11:54:03 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 12:18:29 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void			file_maker(char **argv, t_opt *opt, t_data *dir, int i)
 	len = NULL;
 	while (argv[i])
 	{
+		errno = 0;
 		dr = opendir(argv[i]);
 		if (errno == 20 || (errno == 2 && lstat(argv[i], &buf) != -1 &&
 S_ISLNK(buf.st_mode) == 1) || (errno == 0 && S_ISLNK(buf.st_mode) == 1 &&
