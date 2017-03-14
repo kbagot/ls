@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/12 17:45:10 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 11:47:24 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 12:51:52 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void			redirect_arg(char **argv, t_opt *opt)
 	t_data	*dir;
 	int		i;
 
-	i = 0;
+	i = -1;
 	dir = NULL;
 	file_maker(argv, opt, dir, i);
 	dir_maker(argv, opt, dir, i);

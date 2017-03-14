@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/11 15:43:33 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 12:18:29 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 17:25:42 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,13 @@ void			file_maker(char **argv, t_opt *opt, t_data *dir, int i)
 
 	save = NULL;
 	len = NULL;
-	while (argv[i])
+	while (argv[++i])
 	{
 		errno = 0;
 		dr = opendir(argv[i]);
-		if (errno == 20 || (errno == 2 && lstat(argv[i], &buf) != -1 &&
-S_ISLNK(buf.st_mode) == 1) || (errno == 0 && S_ISLNK(buf.st_mode) == 1 &&
-opt->l == 1))
+		lstat(argv[i], &buf);
+		if (errno == 20 || (errno == 2 && lstat(argv[i], &buf) != -1 && S_ISLNK
+(buf.st_mode) == 1) || (errno == 0 && S_ISLNK(buf.st_mode) == 1 && opt->l == 1))
 		{
 			len = init_len(len);
 			dir = make_line(argv[i], argv[i], dir, argv[i]);
@@ -61,7 +61,6 @@ opt->l == 1))
 		}
 		if (dr)
 			closedir(dr);
-		i++;
 	}
 	if (save)
 		print_file(save, len, opt);
@@ -72,7 +71,7 @@ void			dir_maker(char **argv, t_opt *opt, t_data *dir, int i)
 	struct stat	buf;
 	DIR			*dr;
 
-	while (argv[i])
+	while (argv[++i])
 	{
 		errno = 0;
 		dr = opendir(argv[i]);
@@ -88,6 +87,5 @@ S_ISLNK(buf.st_mode) == 1 && opt->l == 0))
 		}
 		if (dr)
 			closedir(dr);
-		i++;
 	}
 }

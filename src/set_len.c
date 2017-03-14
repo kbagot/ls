@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 16:07:38 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 12:18:31 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 17:25:41 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ void		set_len(t_len *len, t_data *fp)
 	if (ft_intlen(fp->bytes) > len->blen)
 		len->blen = ft_intlen(fp->bytes);
 	if ((fp->inode[0] == 'c' || fp->inode[0] == 'b') &&
-			(ft_intlen(fp->minor) > len->mlen))
-		len->mlen = ft_intlen(fp->minor);
+			(ft_intlen(fp->major) > len->mlen))
+		len->mlen = ft_intlen(fp->major);
 	len->total += fp->blocks;
 }
 
@@ -58,8 +58,8 @@ static void	print_f(t_data *save, t_len *len, int devf, t_opt *opt)
 		{
 			ft_printf("%s  %*d %-*s  %-*s  %*d, %*d %s %s", save->inode,
 len->hlen, save->hlinks, len->ulen, save->user,
-len->glen, save->grp, len->blen, save->bytes,
-len->mlen, save->minor, save->time, save->name);
+len->glen, save->grp, len->blen, save->major,
+len->mlen, save->bytes, save->time, save->name);
 		}
 		else
 			ft_printf("%s  %*d %-*s  %-*s  %*d %s %s", save->inode,
@@ -76,8 +76,8 @@ void		print_file(t_data *save, t_len *len, t_opt *opt)
 	devf = 0;
 	if (len->mlen != 0)
 	{
-		devf = ft_intlen(len->mlen) + 4;
-		len->glen += 2;
+		devf = len->mlen + 3;
+		len->mlen++;
 	}
 	opt->tricks = 1;
 	opt->dpcount = 1;

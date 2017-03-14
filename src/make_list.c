@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/15 13:56:09 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 11:58:20 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 17:25:46 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ t_data			*make_line(char *cleanpath, char *path, t_data *fp, char *name)
 	fp->path = ft_strdup(cleanpath);
 	if (fp->inode[0] == 'c' || fp->inode[0] == 'b')
 	{
-		fp->bytes = major(buf.st_rdev);
-		fp->minor = minor(buf.st_rdev);
+		fp->major = major(buf.st_rdev);
+		fp->bytes = minor(buf.st_rdev);
 	}
 	else
 		fp->bytes = buf.st_size;

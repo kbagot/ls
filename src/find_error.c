@@ -6,36 +6,45 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/11 16:25:09 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/12 17:42:47 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 17:25:44 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ls.h"
 
+static void	swap_arg(char **arg, int i, int j)
+{
+	char *tmp;
+
+	tmp = NULL;
+	tmp = arg[j];
+	arg[j] = arg[i];
+	arg[i] = tmp;
+}
+
 static char	**parse_arg(char **arg, t_opt *opt)
 {
-	int		i;
-	int		j;
-	char	*tmp;
+	struct stat	buf;
+	struct stat buf2;
+	int			i;
+	int			j;
 
-	j = 0;
-	i = 0;
-	tmp = NULL;
-	while (arg[i])
+	j = -1;
+	i = -1;
+	while (arg[++i])
 	{
-		while (arg[j])
+		lstat(arg[i], &buf);
+		while (arg[++j])
 		{
-			if (arg[j] && ((opt->r == 0 && ft_strcmp(arg[i], arg[j]) < 0) ||
-						(opt->r == 1 && ft_strcmp(arg[i], arg[j]) > 0)))
-			{
-				tmp = arg[j];
-				arg[j] = arg[i];
-				arg[i] = tmp;
-			}
-			j++;
+			lstat(arg[j], &buf2);
+			if (arg[j] && ((opt->t == 0 &&
+((opt->r == 0 && ft_strcmp(arg[i], arg[j]) < 0) ||
+(opt->r == 1 && ft_strcmp(arg[i], arg[j]) > 0))) ||
+(opt->t == 1 && ((opt->r == 0 && buf.st_mtime > buf2.st_mtime) ||
+(opt->r == 1 && buf.st_mtime < buf2.st_mtime)))))
+				swap_arg(arg, i, j);
 		}
-		i++;
-		j = 0;
+		j = -1;
 	}
 	return (arg);
 }
