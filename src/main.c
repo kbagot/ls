@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/13 19:44:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/12 19:24:41 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 11:54:32 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static void	init_opt(t_opt *opt)
 {
 	opt->l = 0;
-	opt->R = 0;
+	opt->up_r = 0;
 	opt->a = 0;
 	opt->r = 0;
 	opt->t = 0;
@@ -29,7 +29,7 @@ static void	opt_search(t_opt *opt, char *arg)
 	if (ft_strchr(arg, 'l'))
 		opt->l = 1;
 	if (ft_strchr(arg, 'R'))
-		opt->R = 1;
+		opt->up_r = 1;
 	if (ft_strchr(arg, 'a'))
 		opt->a = 1;
 	if (ft_strchr(arg, 'r'))
@@ -84,6 +84,8 @@ t_opt		*stock_opt(t_opt *opt, char **arg)
 		errno = 0;
 		dr = opendir(arg[i]);
 	}
+	if (dr)
+		closedir(dr);
 	return (opt);
 }
 
@@ -96,12 +98,17 @@ int			main(int argc, char **argv)
 	init_opt(opt);
 	opt = stock_opt(opt, argv);
 	if (errno == 42)
+	{
+		free(opt);
+		opt = NULL;
 		return (1);
+	}
 	argv = find_error(argv, opt);
 	if (argv[0] && argc > 1)
 		redirect_arg(argv, opt);
 	if (opt->tmplol == 0 && opt->tricks == 0)
 		current_dir(opt);
 	free(opt);
+	opt = NULL;
 	return (1);
 }

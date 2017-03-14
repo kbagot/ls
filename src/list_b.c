@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/11 15:43:33 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/13 14:31:52 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 11:54:03 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ void			file_maker(char **argv, t_opt *opt, t_data *dir, int i)
 
 	save = NULL;
 	len = NULL;
-	len = init_len(len);
 	while (argv[i])
 	{
 		dr = opendir(argv[i]);
@@ -54,6 +53,7 @@ void			file_maker(char **argv, t_opt *opt, t_data *dir, int i)
 S_ISLNK(buf.st_mode) == 1) || (errno == 0 && S_ISLNK(buf.st_mode) == 1 &&
 opt->l == 1))
 		{
+			len = init_len(len);
 			dir = make_line(argv[i], argv[i], dir, argv[i]);
 			save = list(save, dir, opt);
 			file_m(dir, len, opt);
@@ -80,9 +80,9 @@ void			dir_maker(char **argv, t_opt *opt, t_data *dir, int i)
 S_ISLNK(buf.st_mode) == 1 && opt->l == 0))
 		{
 			opt->tmplol = 1;
-			if (opt->R == 0)
+			if (opt->up_r == 0)
 				dir = make_dir(ft_strjoin(argv[i], "/"), opt);
-			else if (opt->R == 1)
+			else if (opt->up_r == 1)
 				make_all_r(ft_strdup(argv[i]), dir, opt);
 		}
 		if (dr)

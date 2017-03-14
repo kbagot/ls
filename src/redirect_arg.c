@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/12 17:45:10 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/13 14:16:12 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 11:47:24 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void			current_dir(t_opt *opt)
 	dir = NULL;
 	if (opt->tmplol == 0 && opt->tricks == 0)
 	{
-		if (opt->R == 1)
+		if (opt->up_r == 1)
 			make_all_r(ft_strdup("."), dir, opt);
 		else
 			make_dir("./", opt);

@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/11 17:00:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/13 18:29:18 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 11:47:57 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static int		error_directory(char *path, t_opt *opt)
 
 	errno = 0;
 	dr = opendir(path);
-	if (errno != 0 && opt->R == 1)
+	if (errno != 0 && opt->up_r == 1)
 	{
 		if (path[ft_strlen(path) - 1] == '/')
 			path[ft_strlen(path) - 1] = '\0';
@@ -92,17 +92,21 @@ t_data			*make_dir(char *path, t_opt *opt)
 	t_len	*len;
 
 	save = NULL;
-	len = (t_len*)malloc(sizeof(t_len));
-	init_t_len(len);
 	if (error_directory(path, opt) == -1)
 		return (NULL);
+	len = (t_len*)malloc(sizeof(t_len));
+	init_t_len(len);
 	save = list_dir(path, opt, save, len);
 	if (empty_error(path, opt, save) == -1)
+	{
+		free(len);
+		len = NULL;
 		return (NULL);
+	}
 	if (opt->l == 1)
 		ft_printf("total %d\n", len->total);
 	print_file(save, len, opt);
-	if (opt->R == 0)
+	if (opt->up_r == 0)
 		free_land(save);
 	return (save);
 }

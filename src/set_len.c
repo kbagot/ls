@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 16:07:38 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/12 19:44:08 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 11:40:48 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,4 +90,5 @@ void		print_file(t_data *save, t_len *len, t_opt *opt)
 		ft_printf("\n");
 	}
 	free(len);
+	len = NULL;
 }
