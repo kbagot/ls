@@ -6,13 +6,13 @@
 #    By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/01/17 17:47:06 by kbagot            #+#    #+#              #
-#    Updated: 2017/03/13 11:45:52 by kbagot           ###   ########.fr        #
+#    Updated: 2017/03/14 19:30:25 by kbagot           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ft_ls
-FLAGS = -Wall -Werror -Wextra -g
-I_FILES = main.c print_line.c make_dir.c make_all_r.c redirect_arg.c find_error.c set_len.c list_b.c free_land.c
+FLAGS = -Wall -Werror -Wextra
+I_FILES = main.c filedata_tool.c make_dir.c make_all_r.c redirect_arg.c find_error.c set_len.c list_b.c free_land.c make_list.c
 O_FILES = $(I_FILES:.c=.o)
 C_FILES = $(addprefix src/, $(I_FILES))
 LIBFT = -L libft/ -lft
@@ -20,7 +20,7 @@ LIBFT = -L libft/ -lft
 .PHONY: all clean fclean re
 
 all: $(NAME)
-$(NAME): $(C_FILES)
+$(NAME): $(C_FILES) includes/ls.h
 	@echo "\033[0;35mCompile $(NAME)"
 	@make -C libft/
 	@gcc -o $(NAME) $(FLAGS) $(C_FILES) $(LIBFT) 

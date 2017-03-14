@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/11 15:43:33 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 17:25:42 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 19:38:14 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void		file_m(t_data *dir, t_len *len, t_opt *opt)
 {
-	opt->tmplol = 1;
+	opt->noarg = 1;
 	opt->tricks = 1;
 	set_len(len, dir);
 	errno = 0;
@@ -79,7 +79,7 @@ void			dir_maker(char **argv, t_opt *opt, t_data *dir, int i)
 		if ((errno == 0 && S_ISLNK(buf.st_mode) == 0) || (errno == 0 &&
 S_ISLNK(buf.st_mode) == 1 && opt->l == 0))
 		{
-			opt->tmplol = 1;
+			opt->noarg = 1;
 			if (opt->up_r == 0)
 				dir = make_dir(ft_strjoin(argv[i], "/"), opt);
 			else if (opt->up_r == 1)

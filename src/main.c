@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/13 19:44:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 17:25:47 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/14 19:38:56 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	init_opt(t_opt *opt)
 	opt->t = 0;
 	opt->tricks = 0;
 	opt->dpcount = 0;
-	opt->tmplol = 0;
+	opt->noarg = 0;
 }
 
 static void	opt_search(t_opt *opt, char *arg)
@@ -106,7 +106,7 @@ int			main(int argc, char **argv)
 	argv = find_error(argv, opt);
 	if (argv[0] && argc > 1)
 		redirect_arg(argv, opt);
-	if (opt->tmplol == 0 && opt->tricks == 0)
+	if (opt->noarg == 0 && opt->tricks == 0)
 		current_dir(opt);
 	free(opt);
 	opt = NULL;
