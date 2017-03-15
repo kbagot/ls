@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/11 17:00:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 18:38:10 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/15 19:29:30 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int		error_directory(char *path, t_opt *opt)
 		if (opt->dpcount == 1 && opt->tricks == 1)
 			ft_printf("\n");
 		ft_printf("%s:\n", path);
-		perror(ft_strjoin("ls: ", &(ft_strrchr(path, '/'))[1]));
+		perror(ft_strjoin("ft_ls: ", &(ft_strrchr(path, '/'))[1]));
 		errno = 0;
 		if (dr)
 			closedir(dr);

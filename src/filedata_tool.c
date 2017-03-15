@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/14 11:34:53 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 17:25:42 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/15 19:28:42 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,12 @@ char			*set_time(time_t timef)
 	dtime = ctime(&timef);
 	ntime = NULL;
 	if ((now - timef) >= 15778800 || (now - timef) < 0)
+	{
 		if (ft_strcmp(&dtime[23], " 10000\n") == 0)
 			ntime = build_time(dtime, 23, 6);
 		else
 			ntime = build_time(dtime, 19, 5);
+	}
 	else
 		ntime = ft_strsub(dtime, 4, 12);
 	return (ntime);

@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/11 16:25:09 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 17:25:44 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/15 19:28:58 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@ static char	**parse_arg(char **arg, t_opt *opt)
 static void	print_er(char *arg, t_opt *opt)
 {
 	if (arg[0])
-		perror(ft_strjoin("ls: ", arg));
+		perror(ft_strjoin("ft_ls: ", arg));
 	else
 	{
-		perror(ft_strjoin("ls: ", "fts_open"));
+		perror(ft_strjoin("ft_ls: ", "fts_open"));
 		exit(0);
 	}
 	opt->tricks = 1;
