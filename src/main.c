@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/13 19:44:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 19:38:56 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/15 16:11:06 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ int			parse_opt(char *opt)
 		{
 			if (ft_strchr(val, opt[j]) == NULL || (opt[j] == '-' && opt[j + 1]))
 			{
-				ft_putstr_fd("ls: illegal option -- ", 2);
+				ft_putstr_fd("ft_ls: illegal option -- ", 2);
 				ft_putchar_fd(opt[j], 2);
 				ft_putchar_fd('\n', 2);
-				ft_putstr_fd("usage: ls [", 2);
+				ft_putstr_fd("usage: ft_ls [", 2);
 				ft_putstr_fd(val, 2);
 				ft_putstr_fd("] [file ...]\n", 2);
 				errno = 42;
