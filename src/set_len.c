@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/16 16:07:38 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 17:25:41 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/15 17:58:20 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ len->glen, save->grp, len->blen, save->major,
 len->mlen, save->bytes, save->time, save->name);
 		}
 		else
-			ft_printf("%s  %*d %-*s  %-*s  %*d %s %s", save->inode,
+			ft_printf("%s  %*d %-*s  %-*s  %*ld %s %s", save->inode,
 len->hlen, save->hlinks, len->ulen, save->user, len->glen + devf, save->grp,
 len->blen, save->bytes, save->time, save->name);
 	else
