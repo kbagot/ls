@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/14 19:57:00 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/15 13:14:29 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/15 19:49:45 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ typedef struct		s_data
 	int				hlinks;
 	char			*user;
 	char			*grp;
-	int				bytes;
+	long long int	bytes;
 	int				major;
 	time_t			times;
 	char			*time;
