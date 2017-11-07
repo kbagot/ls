@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/14 19:57:00 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/14 20:07:01 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/03/15 19:49:45 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ typedef struct		s_data
 	int				hlinks;
 	char			*user;
 	char			*grp;
-	int				bytes;
+	long long int	bytes;
 	int				major;
 	time_t			times;
 	char			*time;
@@ -64,7 +64,8 @@ typedef struct		s_len
 	int				mlen;
 }					t_len;
 
-t_data				*make_line(char *cleanpath, char *path, t_data *fp, char *name);
+t_data				*make_line
+(char *cleanpath, char *path, t_data *fp, char *name);
 t_data				*make_dir(char *path, t_opt *opt);
 t_data				*make_list(t_data *fp, t_data *save, t_opt *opt);
 void				print_file(t_data *save, t_len *len, t_opt *opt);
